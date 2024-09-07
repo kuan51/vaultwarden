@@ -1,0 +1,57 @@
+version: "3"
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    environment:
+      - ADMIN_TOKEN={ADMIN_PASSWORD_HASH}
+      # Create password hash with: echo -n "MySecretPassword" | argon2 "$(openssl rand -base64 32)" -e -id -k 65540 -t 3 -p 4 | sed 's/\$/\$\$/g'
+      # The sed command prevents variable interpolation by the compose yaml
+      - ROCKET_WORKERS=20
+      - USE_SYSLOG=true
+      - LOG_LEVEL=warn
+      - EXTENDED_LOGGING=true
+    volumes:
+      - ./vw-data/:/data/
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    networks:
+      - vaultwarden
+    user: 1000:1000
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    command: tunnel run {CF_TUN_ID}
+    environment:
+      - TUNNEL_TOKEN={CF_TUN_TOKEN}
+    restart: unless-stopped
+    networks:
+      - vaultwarden
+    user: 1000:1000
+
+  fail2ban:
+    container_name: fail2ban
+    restart: always
+    image: crazymax/fail2ban:latest
+    environment:
+      - TZ=America/Denver
+      - F2B_DB_PURGE_AGE=30d
+      - F2B_LOG_TARGET=/data/fail2ban.log
+      - F2B_LOG_LEVEL=INFO
+      - F2B_IPTABLES_CHAIN=INPUT
+    volumes:
+      - ./fail2ban-data:/data
+      - ./vw-data:/vaultwarden:ro
+    network_mode: "host"
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+
+networks:
+  vaultwarden:
+    name: vaultwarden
+    external: true
