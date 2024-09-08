@@ -18,6 +18,12 @@ Before you begin, make sure you have the following:
     echo 'eyJhIjoiY2ZfYWNjb3VudF9pZCIsInQiOiJjbG91ZGZsYXJlX3R1bl9pZCIsInMiOiJjZl90dW5fc2VjcmV0In0=' | base64 -d
     ```
 
+    This will decode to the below json. You only need the `cloudflare_tun_id`.
+
+    ```bash
+    {"a":"cf_account_id","t":"cloudflare_tun_id","s":"cf_tun_secret"}
+    ```
+
 4. A bash shell with argon2 installed.
 
     ```bash
@@ -26,21 +32,28 @@ Before you begin, make sure you have the following:
 
 ### Installation
 
-1. To enable the admin page, you need to set an authentication token. After this, the page will be available at `/admin`. Create the password hash and update the ADMIN_TOKEN value in `vaultwarden.env`.
+1. Create the vaultwarden docker network
 
     ```bash
-    echo -n "MySecretPassword" | argon2 "$(openssl rand -base64 32)" -e -id -k 65540 -t 3 -p 4 | sed 's/\$/\$\$/g'
+    docker network create vaultwarden
     ```
 
 2. Copy the `vaultwarden.env.template` file and make a new file named `vaultwarden.env`. Update the configuration values to match your needs.
 
-3. Source the configuration values
+3. In `vaultwarden.env`, to enable the admin page, you need to set an authentication token. After this, the page will be available at `/admin`. Create the password hash and update the ADMIN_TOKEN value in `vaultwarden.env`.
 
     ```bash
-    . vaultwarden.env
+    echo -n "MySecretPassword" | argon2 "$(openssl rand -base64 32)" -e -id -k 65540 -t 3 -p 4
     ```
 
-4. Start the project using docker compose. Run these commands from the project folder.
+4. In `vaultwarden.env`, Both the mysql and mysql root passwords need to be URL encoded. You can run this command to encode the passwords:
+
+    ```bash
+    MYSQL_PASSWORD='your_db_password'
+    echo "$MYSQL_PASSWORD" | sed -e 's/%/%25/g' -e 's/ /%20/g' -e 's/!/%21/g' -e 's/"/%22/g' -e 's/#/%23/g' -e 's/\$/%24/g' -e 's/&/%26/g' -e "s/'/%27/g" -e 's/(/%28/g' -e 's/)/%29/g' -e 's/\*/%2A/g' -e 's/+/%2B/g' -e 's/,/%2C/g' -e 's/\//%2F/g' -e 's/:/%3A/g' -e 's/;/%3B/g' -e 's/</%3C/g' -e 's/=/%3D/g' -e 's/>/%3E/g' -e 's/?/%3F/g' -e 's/@/%40/g' -e 's/\[/%5B/g' -e 's/\\/%5C/g' -e 's/\]/%5D/g' -e 's/\^/%5E/g' -e 's/_/%5F/g' -e 's/`/%60/g' -e 's/{/%7B/g' -e 's/|/%7C/g' -e 's/}/%7D/g' -e 's/~/%7E/g'
+    ```
+
+5. Start the project using docker compose. Run these commands from the project folder.
 
     ```bash
     docker compose up -d
