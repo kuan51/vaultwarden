@@ -48,6 +48,9 @@ services:
       - vaultwarden.env
     command: tunnel run
     restart: unless-stopped
+    depends_on:
+      vaultwarden:
+        condition: service_healthy
     networks:
       - vaultwarden
     user: 1000:1000
