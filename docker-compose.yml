@@ -46,7 +46,7 @@ services:
     container_name: vaultwarden-cloudflared
     env_file:
       - vaultwarden.env
-    command: tunnel run $TUNNEL_ID
+    command: tunnel run
     restart: unless-stopped
     networks:
       - vaultwarden
@@ -72,8 +72,3 @@ networks:
   vaultwarden:
     name: vaultwarden
     external: true
-
-volumes:
-  vw-data:
-  vw-db:
-  config:

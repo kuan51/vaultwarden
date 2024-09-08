@@ -12,19 +12,7 @@ Before you begin, make sure you have the following:
 
 2. A [cloudflare tunnel token](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/create-remote-tunnel/).
 
-3. A cloudflare tunnel id. Once you have the token, you can extract the id from it. The token is a base64 encoded json and the id is one of the json values. You can decode the token with this command:
-
-    ```bash
-    echo 'eyJhIjoiY2ZfYWNjb3VudF9pZCIsInQiOiJjbG91ZGZsYXJlX3R1bl9pZCIsInMiOiJjZl90dW5fc2VjcmV0In0=' | base64 -d
-    ```
-
-    This will decode to the below json. You only need the `cloudflare_tun_id`.
-
-    ```bash
-    {"a":"cf_account_id","t":"cloudflare_tun_id","s":"cf_tun_secret"}
-    ```
-
-4. A bash shell with argon2 installed.
+3. A bash shell with argon2 installed.
 
     ```bash
     sudo apt update && sudo apt install argon2 -y
