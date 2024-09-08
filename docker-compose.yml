@@ -17,6 +17,12 @@ services:
     depends_on:
       vaultwarden-db:
         condition: service_healthy
+    healthcheck:
+      test: curl -s -L http://localhost:80/alive
+      start_period: 5s
+      interval: 30s
+      timeout: 5s
+      retries: 55
 
   vaultwarden-db:
     image: "mariadb"
@@ -31,7 +37,7 @@ services:
     healthcheck:
       test: mariadb-admin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
       start_period: 5s
-      interval: 5s
+      interval: 30s
       timeout: 5s
       retries: 55
 
