@@ -4,11 +4,9 @@ services:
   vaultwarden:
     image: vaultwarden/server:latest
     container_name: vaultwarden
+    env_file:
+      - vaultwarden.env
     environment:
-      - ADMIN_TOKEN={ADMIN_PASSWORD_HASH}
-      # Create password hash with: echo -n "MySecretPassword" | argon2 "$(openssl rand -base64 32)" -e -id -k 65540 -t 3 -p 4 | sed 's/\$/\$\$/g'
-      # The sed command prevents variable interpolation by the compose yaml
-      - ROCKET_WORKERS=20
       - USE_SYSLOG=true
       - LOG_LEVEL=warn
       - EXTENDED_LOGGING=true
@@ -21,12 +19,31 @@ services:
       - vaultwarden
     user: 1000:1000
 
+  vaultwarden-db:
+    image: "mariadb"
+    container_name: "vaultwarden-db"
+    restart: always
+    env_file:
+    - vaultwarden.env
+    networks:
+      - vaultwarden
+    volumes:
+    - "vw-db:/var/lib/mysql"
+    healthcheck:
+      test: mariadb-admin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 55
+
   cloudflared:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared
-    command: tunnel run {CF_TUN_ID}
+    env_file:
+      - vaultwarden.env
+    command: tunnel run $CF_TUN_ID
     environment:
-      - TUNNEL_TOKEN={CF_TUN_TOKEN}
+      - TUNNEL_TOKEN=$CF_TUN_TOKEN
     restart: unless-stopped
     networks:
       - vaultwarden
@@ -45,13 +62,20 @@ services:
     volumes:
       - ./fail2ban-data:/data
       - ./vw-data:/vaultwarden:ro
+    networks:
+      - vaultwarden
     network_mode: "host"
     privileged: true
     cap_add:
       - NET_ADMIN
       - NET_RAW
+    user: 1000:1000
 
 networks:
   vaultwarden:
     name: vaultwarden
     external: true
+
+volumes:
+ vw-data:
+ vw-db:
