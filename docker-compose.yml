@@ -8,8 +8,6 @@ services:
       - USE_SYSLOG=true
       - LOG_LEVEL=warn
       - EXTENDED_LOGGING=true
-    volumes:
-      - ./vw-data/:/data/
     restart: always
     networks:
       - vaultwarden
