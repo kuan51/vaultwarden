@@ -12,11 +12,17 @@ Before you begin, make sure you have the following:
 
 2. A [cloudflare tunnel token](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/create-remote-tunnel/).
 
-3. A bash shell with argon2 installed.
+3. Debian, Ubuntu, or Raspbian with argon2 installed.
 
     ```bash
     sudo apt update && sudo apt install argon2 -y
     ```
+    
+4. Docker and Docker Compose
+
+   ```bash
+   sudo apt install docker.io -y
+   ```
 
 ### Installation
 
