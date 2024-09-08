@@ -9,7 +9,7 @@ services:
       - LOG_LEVEL=warn
       - EXTENDED_LOGGING=true
     volumes:
-      - ./vw-data/:/data/
+      - ./data/vw-data/:/data/
     restart: always
     networks:
       - vaultwarden
@@ -25,7 +25,7 @@ services:
     env_file:
       - vaultwarden.env
     volumes:
-      - ./vw-db/:/var/lib/mysql
+      - ./data/vw-db/:/var/lib/mysql
     networks:
       - vaultwarden
     healthcheck:
@@ -58,7 +58,7 @@ services:
       - PGID=1000
       - TZ=US/Mountain
     volumes:
-      - /path/to/fail2ban/config:/config
+      - ./data/fail2ban/config:/config
       - /var/log:/var/log:ro
     restart: always
 
@@ -70,3 +70,4 @@ networks:
 volumes:
   vw-data:
   vw-db:
+  config:
