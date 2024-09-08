@@ -2,3 +2,4 @@ docker-compose.yml
 vw-data/
 vw-db/
 fail2ban-data/
+vaultwarden.env

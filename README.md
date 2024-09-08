@@ -32,7 +32,7 @@ Before you begin, make sure you have the following:
     echo -n "MySecretPassword" | argon2 "$(openssl rand -base64 32)" -e -id -k 65540 -t 3 -p 4 | sed 's/\$/\$\$/g'
     ```
 
-2. Update the `vaultwarden.env` file with your desired configurations.
+2. Copy the `vaultwarden.env.template` file and make a new file named `vaultwarden.env`. Update the configuration values to match your needs.
 
 3. Source the configuration values
 
