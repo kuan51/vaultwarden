@@ -21,7 +21,7 @@ Before you begin, make sure you have the following:
 4. Docker and Docker Compose
 
    ```bash
-   sudo apt install docker.io -y
+   sudo apt install docker.io docker-compose -y
    ```
 
 ### Installation
