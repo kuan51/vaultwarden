@@ -8,8 +8,6 @@ services:
       - USE_SYSLOG=true
       - LOG_LEVEL=warn
       - EXTENDED_LOGGING=true
-      # The connectiopn string for the database
-      - DATABASE_URL=mysql://$MYSQL_USER:$MYSQL_PASSWORD@mysql:3306/$MYSQL_DATABASE
     volumes:
       - vaultwarden:/data/
     restart: always
