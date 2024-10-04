@@ -9,11 +9,10 @@ services:
       - LOG_LEVEL=warn
       - EXTENDED_LOGGING=true
     volumes:
-      - ./data/vw-data/:/data/
+      - vaultwarden:/data/
     restart: always
     networks:
       - vaultwarden
-    user: 1000:1000
     depends_on:
       vaultwarden-db:
         condition: service_healthy
@@ -25,13 +24,13 @@ services:
       retries: 55
 
   vaultwarden-db:
-    image: "mariadb"
+    image: "mariadb:latest"
     container_name: "mysql"
     restart: always
     env_file:
       - vaultwarden.env
     volumes:
-      - ./data/vw-db/:/var/lib/mysql
+      - vaultwarden_db:/var/lib/mysql
     networks:
       - vaultwarden
     healthcheck:
@@ -67,11 +66,15 @@ services:
       - PGID=1000
       - TZ=US/Mountain
     volumes:
-      - ./data/fail2ban/config:/config
+      - fail2ban_config:/config
       - /var/log:/var/log:ro
     restart: always
 
 networks:
   vaultwarden:
     name: vaultwarden
-    external: true
+
+volumes:
+  vaultwarden:
+  vaultwarden_db:
+  fail2ban_config:

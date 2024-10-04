@@ -17,7 +17,7 @@ Before you begin, make sure you have the following:
     ```bash
     sudo apt update && sudo apt install argon2 -y
     ```
-    
+
 4. Docker and Docker Compose
 
    ```bash
